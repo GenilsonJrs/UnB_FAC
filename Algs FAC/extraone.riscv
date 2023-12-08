@@ -1,0 +1,127 @@
+.data
+	spositivo: .asciz "+\n"
+	snegativo: .asciz "-\n"
+	hex: .asciz "0x00"
+	barran: .asciz "\n"
+.text
+	li a7, 6
+	ecall
+	fmv.s fa1, fa0 # Movendo o valor em float para para fa1
+	li a7, 2 
+	ecall
+	la a0, barran
+	li a7, 4 
+	ecall 
+	addi a2, zero, 0 # Usando a2 para conversão de inteiro/float
+	fcvt.s.w fa2, a2 # cconvertendo float e colocando em fa2
+	flt.s s0, fa1, fa2 # Comparando os valores fa1 e fa2 armazenando 1 em s0 caso fa1 < fa2, caso contrário 0
+	# Teste de positivo e negativo. se s0 = 0, então pula para positivosi
+	beqz, s0, positivosi
+negativosi:
+		li a7, 4
+		la a0, snegativo
+		ecall
+		j prooximo # Caso o sinal já seja neg, pula para prooximo instrução
+positivosi:
+		li a7, 4
+		la a0, spositivo
+		ecall
+prooximo:
+	fmv.x.s t0, fa1 # Movendo o valor para t0 em formato inteiro
+	slli t0, t0, 1 # Calculando expoente binário
+	srli t0, t0, 24 # Alinhando valor
+	addi t0, t0, -127 # Subtraindo no padrão IEEE 754 O 127 de t0
+	li, a7, 1 
+	mv a0, t0 
+	ecall 
+	la a0, barran 
+	li a7, 4 
+	ecall 
+	fmv.x.s t1, fa1 # Movendo o valor em formato inteiro
+	# Significado/Mantissa
+	slli s1,t1,9 # Desloca 9 bits a esquerda e armazena em s1
+	srli s1,s1,9 # Desloca 9 bits a direita e armazena em s1
+	# Definindo Valores
+	li s2,28
+	li s3,4
+	li s4,8
+	li t6,0	
+	li t1,10
+	# Imprime Hex
+	li a7,4
+	la a0,hex
+	ecall
+loop:
+	# s3 = s2? Caso verdade, pula para enc, se não continua
+	beq s3,s2,enc
+	addi s3,s3,4
+	# Extraindo Hex da Mantissa
+	sll s6,s1,s3
+	srli s6,s6,28
+	bge s6,t1,hexad
+	li a7,1
+	mv a0,s6
+	ecall
+voltarloop:
+	j loop
+	# Encontrando a correspondencia no valor exadecimal para ver qual caractere deve ser impresso
+	# Cada bloco corresponde 0 a F
+hexad:
+	slti t2,s6,11 
+	bnez t2,A
+	slti t2,s6,12 
+	bnez t2,B
+	slti t2,s6,13 
+	bnez t2,C
+	slti t2,s6,14 
+	bnez t2,D
+	slti t2,s6,15 
+	bnez t2,E
+	slti t2,s6,16 
+	bnez t2,F
+	# Após entrar em um, move o valor para a0 para ser impresso e retorna so loop
+A:
+	li t2,65
+	li a7,11
+	mv a0,t2
+	ecall
+	j voltarloop
+B:
+	li t2,66
+	li a7,11
+	mv a0,t2
+	ecall
+	j voltarloop
+C:
+	li t2,67
+	li a7,11
+	mv a0,t2
+	ecall
+	j voltarloop
+	
+D:
+	li t2,68
+	li a7,11
+	mv a0,t2
+	ecall
+	j voltarloop
+E:
+	li t2,69
+	li a7,11
+	mv a0,t2
+	ecall
+	j voltarloop	
+F:
+	li t2,70
+	li a7,11
+	mv a0,t2
+	ecall
+	j voltarloop
+	# Após os valores baterem depois de retornar ao loop, entra em enc e imprime a ultima quebra de linha
+enc:
+	li a7, 4
+	la, a0, barran
+	ecall 
+	
+	li a7, 10
+    	ecall

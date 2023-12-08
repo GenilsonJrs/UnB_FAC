@@ -1,0 +1,73 @@
+.data
+	#questoes: .asciz ""
+	gabarito: .space 100
+	respostas: .space 100
+	barran: .asciz "\n"
+
+.text
+
+	li a7, 5
+	ecall
+	mv t0, a0
+	
+	# Adicionando 1 ao t0
+	addi t0, t0, 2
+
+	# Lendo o Gabarito
+    	li a7, 8
+    	la a0, gabarito  # Endereço do gabarito
+    	mv a1, t0  # Usar o valor em t0 como o tamanho máximo do gabarito
+    	ecall
+    	mv t1, a0
+    	
+    	li a7, 8	
+    	la a0, respostas  # Endereço do gabarito
+    	mv a1, t0  # Usar o valor em t0 como o tamanho máximo do gabarito
+    	ecall
+    	mv t2, a0
+    	
+    	# Contador I
+    	li t3, 0
+    	# Contador Quantidade
+    	li t4, 0
+    	
+    	addi t0, t0, -2
+loop:
+	beq t0, t3, print
+	
+	lb t5, (t1) # Gabarito
+	lb t6, (t2) # Resposta
+	
+	#bne t5, t6, diferente
+	#addi t4, t4, 1			
+#diferente:
+				
+	#addi t3, t3, 1	
+	#addi t1, t1, 1
+	#addi t2, t2, 1
+	#j loop
+	
+		
+	beq t5, t6, incrementa
+	addi t3, t3, 1
+	addi t1, t1, 1
+	addi t2, t2, 1
+	j loop
+incrementa:
+	addi t4, t4, 1
+	addi t3, t3, 1	
+	addi t1, t1, 1
+	addi t2, t2, 1
+	j loop
+																																																
+print:   	
+	
+	li a7, 1
+	mv a0, t4
+	ecall
+	
+	li a7, 4
+	la a0, barran
+	ecall
+	
+	li a7, 10

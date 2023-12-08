@@ -1,0 +1,71 @@
+.data
+	n: .asciz ""
+	barran: .asciz "\n"
+	valorerrado: .asciz "Entrada invalida."
+	sim: .asciz "sim"
+	nao: .asciz "nao"
+	
+	
+
+.text
+	# Escrevendo Na Tela
+	li a7, 4
+	la a0, n
+	ecall
+	# Lendo o Inteiro
+	li a7, 5
+	ecall
+	# Armazenando em t0
+	mv t0, a0
+
+	# Verificando se é Natural > 0 
+	blez t0, valorinvalido
+	
+	li t1, 1 # t1 = 1
+	li t2, 0 # t2 = 0
+	li t4, 2 # 2
+	
+	loop:
+	rem t3, t0, t1 # Resto da divisão
+	beqz t3, true
+	addi t1, t1, 1 # Adição
+	j teste
+	
+	true:
+	addi t2, t2, 1 # Adição
+	addi t1, t1, 1 # Adição
+	
+	teste:
+	ble t1, t0, loop
+	
+	beq t2, t4, primo
+	j naoprimo
+
+valorinvalido:
+	# Escrevedo Mensagem para Invalido
+	li a7, 4
+	la a0, valorerrado
+	ecall
+	j sair
+	
+primo:
+	# Escrevedo Mensagem para Primo
+	li a7, 4
+	la a0, sim
+	ecall
+	j sair
+	
+naoprimo:
+	# Escrevedo Mensagem para Não Primo
+	li a7, 4
+	la a0, nao
+	ecall
+	j sair
+	
+sair:	
+	# Barra N	
+	li a7, 4
+	la a0, barran
+	ecall
+	
+	

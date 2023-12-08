@@ -1,0 +1,59 @@
+.data
+	n1: .asciz "Digite o numero: "
+	par: .asciz " Par!" 
+	impar: .asciz " Impar!" 
+	eh: .asciz " eh" 
+	barran: .asciz "\n"
+
+.text
+	li t1, 2
+	
+	li a7, 4
+	la a0, n1
+	ecall
+	
+	li a7, 5
+	ecall
+	
+	mv t0, a0
+	
+	rem t3, t0, t1
+	beqz t3, npar
+	
+	
+	li a7, 1
+	mv a0, t0
+	ecall
+	
+	li a7, 4
+	la a0, eh
+	ecall
+	
+	li a7, 4
+	la a0, impar
+	ecall
+	
+	j print
+	
+npar:
+
+	li a7, 1
+	mv a0, t0
+	ecall
+	
+	li a7, 4 
+	la a0, eh
+	ecall
+	
+	li a7, 4
+	la a0, par
+	ecall
+
+print:
+
+	li a7, 4
+	la a0, barran
+	ecall
+	
+	li a7, 10
+	ecall

@@ -1,0 +1,51 @@
+.data 
+	qtd: .asciz ""
+	numeros: .asciz ""
+	barran: .asciz "\n"
+.text
+main:
+
+	li a7, 4
+	la a0, qtd
+	ecall
+	
+	li a7, 5
+	ecall
+	
+	mv t0, a0
+	
+	li t2, 0
+	
+	li t1, -2147483648
+loop:
+    # Exibir o prompt para o número atual
+    li a7, 4
+    la a0, numeros
+    ecall
+
+    # Ler o número
+    li a7, 5
+    ecall
+
+    # Comparar o número atual com o maior (t1 é usado para armazenar o maior número)
+    bgt a0, t1, attmaior
+    j incrementa
+
+attmaior:
+    mv t1, a0  # Atualiza o maior número
+
+incrementa:
+    addi t2, t2, 1  # Incrementa o contador
+
+    # Verifica se o contador atingiu a quantidade desejada
+    bge t2, t0, imprime
+    j loop
+
+imprime:
+	li a7, 1
+	mv a0, t1
+	ecall
+	
+	li a7, 4
+	la, a0, barran
+	ecall

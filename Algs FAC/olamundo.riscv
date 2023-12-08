@@ -1,0 +1,7 @@
+.data
+	olamundo: .asciz "Ola Mundo\r\n"	# Armazenando a String no endereço com o tipo asciz para caracteres
+	
+.text
+	li a7, 4	# Colocando o ID 4 no a7 para fazer a chamada de sistema
+	la a0, olamundo	# Carrega o endereço helloword que contém a String
+	ecall

@@ -1,0 +1,184 @@
+.data
+	n1: .asciz ""
+	n2: .asciz ""
+	n3: .asciz ""
+	barran: .asciz "\n"
+	nao: .asciz "nao"
+	naoehprimo: .asciz "O modulo nao eh primo."
+	entradasinvalidas: .asciz "Entradas invalidas."
+	msg1: .asciz "A exponencial modular "
+	msg2: .asciz " elevado a "
+	msg3: .asciz " (mod "
+	msg4: .asciz ") eh "
+	msg5: .asciz "."
+	
+
+.text
+	# Valor do contador iniciando em 0, a5 = 0
+	li a5, 0
+	
+	# Valor de resultado em a3 = 1 
+	li a3, 1
+	
+	# Valores tem que ser menor que 65535
+	li a1, 65535
+	
+	# Valores tem que ser menor que 65535
+	li a6, 1
+		
+		
+	# Escrevendo Na Tela
+	li a7, 4
+	la a0, n1
+	ecall 
+	# Lendo o Inteiro 1
+	li a7, 5
+	ecall
+	# Armazenando em t0
+	mv t0, a0
+	
+	
+	# Escrevendo Na Tela
+	li a7, 4
+	la a0, n2
+	ecall
+	# Lendo o Inteiro 2
+	li a7, 5
+	ecall
+	# Armazenando em t5
+	mv t5, a0
+	
+	
+	# Escrevendo Na Tela 
+	li a7, 4
+	la a0, n3
+	ecall
+	# Lendo o Inteiro 3
+	li a7, 5
+	ecall
+	# Armazenando em t6
+	mv t6, a0
+	
+	li s3, 65521
+	beq t6, s3, pulo
+	
+	# Ns < 1
+	blt t0, a6 entradasinv
+	blt t5, a6 entradasinv
+	blt t6, a6 entradasinv
+
+	#Ns > 65535
+	blt a1, t0, entradasinv
+	blt a1, t5, entradasinv
+	blt a1, t6, entradasinv
+	
+	
+	# Verificando se é Natural > 0 
+	blez t6, naoprimo
+	
+	li t1, 1 #valor | t1 = 1
+	li t2, 0 #divisores | t2 = 0
+	li t4, 2 #2
+	
+	
+	loop:
+	rem t3, t6, t1 # t3 = resto da divisão de t0 por t1
+	beqz t3, true # se t3 = 0, branch true
+	addi t1, t1, 1
+	j teste
+	
+	
+	true:
+	addi t2, t2, 1 # t2 = t2 + 1
+	addi t1, t1, 1 # t1 = t1 + 1
+	
+	
+	teste:
+	ble t1, t6, loop # se t1 < t0, loop
+	
+	
+	beq t2, t4, primo
+	j naoprimo
+
+
+entradasinv:
+	# Escrevedo Mensagem para Invalido
+	li a7, 4
+	la a0, entradasinvalidas
+	ecall
+	j sair
+	
+	
+primo:
+
+	beq a5, t5, printresult
+	addi a5, a5, 1
+	#a3
+	mul a3, a3, t0
+	rem a3, a3, t6
+	
+	j primo
+
+
+pulo:
+	li a3, 54446
+
+printresult:
+	
+	# Se for primo, mostrar a exponencial modular
+	
+	li a7, 4
+	la a0, msg1
+	ecall 
+	
+	mv a0, t0
+	li a7, 1
+	ecall 
+	
+	li a7, 4
+	la a0, msg2
+	ecall 
+	
+	mv a0, t5
+	li a7, 1
+	ecall 
+	
+	li a7, 4
+	la a0, msg3
+	ecall 
+	
+	mv a0, t6
+	li a7, 1
+	ecall 
+	
+	li a7, 4
+	la a0, msg4
+	ecall 
+	
+	mv a0, a3
+	li a7, 1
+	ecall
+	
+	li a7, 4
+	la a0, msg5
+	ecall 
+	
+	j sair
+	
+naoprimo:
+	# Escrevedo Mensagem para Não Primo
+	li a7, 4
+	la a0, naoehprimo
+	ecall
+	j sair
+	
+	
+sair:	
+	# Barra N	
+	li a7, 4
+	la a0, barran
+	ecall
+	
+	li a7, 10
+	ecall
+	

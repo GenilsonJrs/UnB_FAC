@@ -1,0 +1,44 @@
+.data
+	num1: .asciz ""
+	num2: .asciz "" 
+	result: .asciz ""
+	barran: .asciz "\n"
+	
+.text	
+	# Primeiro Numero
+	li a7, 4
+	la a0, num1 
+	ecall
+	
+	li a7, 5	# Salvando o Inteiro
+	ecall
+	
+	mv t0, a0 # Movendo Valor do número para o t0
+	
+	# Segundo Numero
+	li a7, 4
+	la a0, num2
+	ecall
+	
+	li a7, 5 # Salvando o Inteiro
+	ecall
+	
+	mv t1, a0 # Movendo Valor do número para o t1
+	
+	# Somando os valores de num1 e num2
+	add t2, t0, t1	# Adicionando a soma de t0 e t1 a t2
+	
+	li a7, 4
+	la a0, result
+	ecall
+	
+	
+	li a7, 1 # Printando o Inteiro
+	mv a0, t2
+	ecall
+	
+	li a7, 4 # Pulando linha com \n
+	la a0, barran
+	ecall
+	
+	
